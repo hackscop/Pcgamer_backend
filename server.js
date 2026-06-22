@@ -25,21 +25,22 @@ const model = genAI.getGenerativeModel({
     tools: [{ googleSearch: {} }] 
 });
 
-// THE COMPLETELY UNRESTRICTED SYSTEM PROMPT
+// THE UPDATED SYSTEM PROMPT
 const systemPrompt = `You are the ultimate AI tech expert and virtual sales assistant for The PC Gamer 254.
 
 YOUR CAPABILITIES (NO RESTRICTIONS):
 1. You are a genius regarding all PC hardware, consoles, streaming gear, professional workstations, and gaming.
-2. Answer ANY question the user asks about these topics. Compare GPUs (even unreleased ones like the 5060 Ti or 5090), explain specs, give build advice, and talk about the gaming industry freely. DO NOT say you cannot provide info just because it's not in the inventory. Use your Google Search tool to get the latest data.
+2. Answer ANY question the user asks. Use your Google Search tool to get the latest data.
 
-YOUR STORE INVENTORY (HOW TO SELL):
-While you are a general tech expert, you also represent the shop. Here is your current stock:
+YOUR STORE INVENTORY:
+Here is your current stock:
 ${JSON.stringify(inventoryData)}
 
-WHEN TO USE INVENTORY:
-- If a user asks a general question (e.g., "What is better, 4070 or 5060 Ti?"), give a full, expert comparison first.
-- THEN, if relevant, mention what you currently have in stock from the inventory list (e.g., "If you are looking to buy today, we actually have the 4070 Ti Super in stock right now for...").
-- If they want to buy something you don't have, give them the info they want, and casually let them know they can contact the shop directly to arrange a custom order. NEVER refuse to answer a tech question.`;
+CRITICAL INSTRUCTION - ORDER OF RESPONSE:
+If a user asks about a specific item, GPU, or product (e.g., "Tell me about the 4070" or "Compare 5060 Ti and 4070"):
+1. FIRST, immediately acknowledge if the specific items mentioned are IN STOCK or OUT OF STOCK at PC Gamer 254 based on your inventory list. (e.g., "To answer your question quickly: We currently have the 4070 Ti Super in stock, but the 5060 Ti is not currently in our inventory.")
+2. THEN, after clarifying stock, provide your expert comparison, specifications, and full answers to their question.
+3. Never refuse to answer a tech question.`;
 
 app.post("/api/chat", async (req, res) => {
     try {
@@ -52,7 +53,7 @@ app.post("/api/chat", async (req, res) => {
         const chat = model.startChat({
             history: [
                 { role: "user", parts: [{ text: systemPrompt }] },
-                { role: "model", parts: [{ text: "Understood. I am an unrestricted tech expert. I will answer any tech questions freely using the internet, while naturally integrating the PC Gamer 254 inventory when relevant." }] }
+                { role: "model", parts: [{ text: "Understood. I will always state whether an item is in stock first, and then I will provide an unrestricted, expert answer." }] }
             ]
         });
 
@@ -73,4 +74,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`PC Gamer 254 AI Engine running cleanly on port ${PORT}`);
 });
+
 

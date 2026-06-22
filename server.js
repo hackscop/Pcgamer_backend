@@ -19,7 +19,7 @@ try {
 // Initialize Google Gemini
 // You need to provide your own API key in the .env file
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); 
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" }); 
 
 // Hardcoded System Prompt for PC Gamer 254
 const systemPrompt = `You are the official AI virtual sales assistant for The PC Gamer 254. 

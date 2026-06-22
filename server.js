@@ -8,31 +8,43 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Load the isolated PC Gamer inventory
+// Load the isolated PC Gamer Inventory
 let inventoryData = [];
 try {
-    inventoryData = JSON.parse(fs.readFileSync('./inventory.json', 'utf8'));
+    inventoryData = JSON.parse(fs.readFileSync("./Inventory.json", "utf8"));
 } catch (error) {
     console.error("Error loading inventory.json. Ensure the file exists.", error);
 }
 
 // Initialize Google Gemini
-// You need to provide your own API key in the .env file
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" }); 
 
-// Hardcoded System Prompt for PC Gamer 254
-const systemPrompt = `You are the official AI virtual sales assistant for The PC Gamer 254. 
-Your goal is to help customers find the right custom PC builds, components, and accessories. 
-Be extremely polite, professional, and highly knowledgeable about PC hardware. 
-Do not invent items, brands, or prices. Only recommend items from this provided inventory list:
+// Enable the AI to search the live internet
+const model = genAI.getGenerativeModel({ 
+    model: "gemini-2.5-flash", 
+    tools: [{ googleSearch: {} }] 
+});
+
+// THE COMPLETELY UNRESTRICTED SYSTEM PROMPT
+const systemPrompt = `You are the ultimate AI tech expert and virtual sales assistant for The PC Gamer 254.
+
+YOUR CAPABILITIES (NO RESTRICTIONS):
+1. You are a genius regarding all PC hardware, consoles, streaming gear, professional workstations, and gaming.
+2. Answer ANY question the user asks about these topics. Compare GPUs (even unreleased ones like the 5060 Ti or 5090), explain specs, give build advice, and talk about the gaming industry freely. DO NOT say you cannot provide info just because it's not in the inventory. Use your Google Search tool to get the latest data.
+
+YOUR STORE INVENTORY (HOW TO SELL):
+While you are a general tech expert, you also represent the shop. Here is your current stock:
 ${JSON.stringify(inventoryData)}
-If a user asks for something not in the inventory, politely let them know to contact the shop directly.`;
 
-app.post('/api/chat', async (req, res) => {
+WHEN TO USE INVENTORY:
+- If a user asks a general question (e.g., "What is better, 4070 or 5060 Ti?"), give a full, expert comparison first.
+- THEN, if relevant, mention what you currently have in stock from the inventory list (e.g., "If you are looking to buy today, we actually have the 4070 Ti Super in stock right now for...").
+- If they want to buy something you don't have, give them the info they want, and casually let them know they can contact the shop directly to arrange a custom order. NEVER refuse to answer a tech question.`;
+
+app.post("/api/chat", async (req, res) => {
     try {
         const { message } = req.body;
-        
+
         if (!message) {
             return res.status(400).json({ error: "Message text is required." });
         }
@@ -40,7 +52,7 @@ app.post('/api/chat', async (req, res) => {
         const chat = model.startChat({
             history: [
                 { role: "user", parts: [{ text: systemPrompt }] },
-                { role: "model", parts: [{ text: "Understood. I am ready to assist customers of The PC Gamer 254." }] }
+                { role: "model", parts: [{ text: "Understood. I am an unrestricted tech expert. I will answer any tech questions freely using the internet, while naturally integrating the PC Gamer 254 inventory when relevant." }] }
             ]
         });
 
@@ -61,3 +73,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`PC Gamer 254 AI Engine running cleanly on port ${PORT}`);
 });
+

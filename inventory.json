@@ -1,0 +1,20 @@
+[
+  {
+    "item": "NVIDIA GeForce RTX 4070 Ti Super",
+    "category": "GPU",
+    "price_kes": 145000,
+    "stock": "In Stock"
+  },
+  {
+    "item": "AMD Ryzen 7 7800X3D",
+    "category": "CPU",
+    "price_kes": 72000,
+    "stock": "In Stock"
+  },
+  {
+    "item": "Corsair RM850x 850W Power Supply",
+    "category": "PSU",
+    "price_kes": 22000,
+    "stock": "Low Stock"
+  }
+]

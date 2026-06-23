@@ -8,24 +8,23 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Load the isolated Inventory
+// Load the isolated Inventory (Fixed Case Sensitivity)
 let inventoryData = [];
 try {
-    inventoryData = JSON.parse(fs.readFileSync("./Inventory.json", "utf8"));
+    // Make sure the file in GitHub is exactly named 'inventory.json' (lowercase i)
+    inventoryData = JSON.parse(fs.readFileSync("./inventory.json", "utf8"));
 } catch (error) {
-    console.error("Error loading inventory.json. Ensure the file exists.", error);
+    console.error("Error loading inventory file. Ensure the exact file name matches.", error);
 }
 
 // Initialize Google Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Enable the AI to search the live internet
 const model = genAI.getGenerativeModel({ 
     model: "gemini-2.5-flash", 
     tools: [{ googleSearch: {} }] 
 });
 
-// THE ESGAMING SYSTEM PROMPT
 const systemPrompt = `You are the ultimate AI tech expert and virtual sales assistant for ESGaming.
 
 YOUR CAPABILITIES (NO RESTRICTIONS):
@@ -69,7 +68,6 @@ app.post("/api/chat", async (req, res) => {
     }
 });
 
-// Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`ESGaming AI Engine running cleanly on port ${PORT}`);

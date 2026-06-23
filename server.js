@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Load the isolated PC Gamer Inventory
+// Load the isolated Inventory
 let inventoryData = [];
 try {
     inventoryData = JSON.parse(fs.readFileSync("./Inventory.json", "utf8"));
@@ -25,8 +25,8 @@ const model = genAI.getGenerativeModel({
     tools: [{ googleSearch: {} }] 
 });
 
-// THE UPDATED SYSTEM PROMPT
-const systemPrompt = `You are the ultimate AI tech expert and virtual sales assistant for The PC Gamer 254.
+// THE ESGAMING SYSTEM PROMPT
+const systemPrompt = `You are the ultimate AI tech expert and virtual sales assistant for ESGaming.
 
 YOUR CAPABILITIES (NO RESTRICTIONS):
 1. You are a genius regarding all PC hardware, consoles, streaming gear, professional workstations, and gaming.
@@ -37,8 +37,8 @@ Here is your current stock:
 ${JSON.stringify(inventoryData)}
 
 CRITICAL INSTRUCTION - ORDER OF RESPONSE:
-If a user asks about a specific item, GPU, or product (e.g., "Tell me about the 4070" or "Compare 5060 Ti and 4070"):
-1. FIRST, immediately acknowledge if the specific items mentioned are IN STOCK or OUT OF STOCK at PC Gamer 254 based on your inventory list. (e.g., "To answer your question quickly: We currently have the 4070 Ti Super in stock, but the 5060 Ti is not currently in our inventory.")
+If a user asks about a specific item, GPU, or product:
+1. FIRST, immediately acknowledge if the specific items mentioned are IN STOCK or OUT OF STOCK at ESGaming based on your inventory list.
 2. THEN, after clarifying stock, provide your expert comparison, specifications, and full answers to their question.
 3. Never refuse to answer a tech question.`;
 
@@ -72,7 +72,8 @@ app.post("/api/chat", async (req, res) => {
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`PC Gamer 254 AI Engine running cleanly on port ${PORT}`);
+    console.log(`ESGaming AI Engine running cleanly on port ${PORT}`);
 });
+
 
 

@@ -11,7 +11,7 @@ app.use(express.json());
 // Load the isolated PC Gamer Inventory
 let inventoryData = [];
 try {
-    inventoryData = JSON.parse(fs.readFileSync("./Inventory.json", "utf8"));
+    inventoryData = JSON.parse(fs.readFileSync("./inventory.json", "utf8"));
 } catch (error) {
     console.error("Error loading inventory.json. Ensure the file exists.", error);
 }
